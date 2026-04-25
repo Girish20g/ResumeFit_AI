@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import './Login.scss';
 import { Link, useNavigate } from 'react-router';
 import loginBg from "../../../assets/login_background.svg";
+import { useAuth } from '../hooks/useAuth';
 
 interface FormState {
   email: string;
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
     password: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const {loading, handleLogin} = useAuth();
 
   const navigate = useNavigate();
 
@@ -125,28 +126,12 @@ const Login: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // TODO: Replace with actual API call
-      console.log('Form submitted with:', {
-        email: formState.email,
-        password: formState.password,
-      });
-
-      // Simulating API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // TODO: Handle login response and redirect
-      console.log('Login successful');
+      await handleLogin(formState.email, formState.password);
+      
+      navigate("/");
 
       // Reset form on success (optional)
       setFormState({ email: '', password: '' });
-    } catch (error) {
-      console.error('Login error:', error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const footerContent = (
@@ -198,9 +183,9 @@ const Login: React.FC = () => {
             type="submit"
             variant="primary"
             fullWidth
-            loading={isLoading}
+            loading={loading}
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </Button>
         </FormContainer>
       </div>

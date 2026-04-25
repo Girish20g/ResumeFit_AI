@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import './Login.scss';
 import { Link, useNavigate } from 'react-router';
 import loginBg from "../../../assets/login_background.svg";
+import { useAuth } from '../hooks/useAuth';
 
 interface FormState {
   username: string;
@@ -38,9 +39,9 @@ const Register: React.FC = () => {
     password: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
+
+  const {loading, handleRegister} = useAuth();
 
   // Email validation regex - RFC 5322 simplified
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -141,29 +142,13 @@ const Register: React.FC = () => {
         console.log('Form validation failed');
         return;
       }
-  
-      setIsLoading(true);
-  
-      try {
-        // TODO: Replace with actual API call
-        console.log('Form submitted with:', {
-          email: formState.email,
-          password: formState.password,
-        });
-  
-        // Simulating API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-        // TODO: Handle login response and redirect
-        console.log('Login successful');
-  
-        // Reset form on success (optional)
-        setFormState({ username: '', email: '', password: '' });
-      } catch (error) {
-        console.error('Login error:', error);
-      } finally {
-        setIsLoading(false);
-      }
+
+      await handleRegister(formState.username, formState.email, formState.password);
+
+      navigate("/");
+
+      setFormState({ username: '', email: '', password: '' });
+      
     };
 
     const footerContent = (
@@ -226,9 +211,9 @@ const Register: React.FC = () => {
             type="submit"
             variant="primary"
             fullWidth
-            loading={isLoading}
+            loading={loading}
           >
-            {isLoading ? 'Signing up...' : 'Sign Up'}
+            {loading ? 'Signing up...' : 'Sign Up'}
           </Button>
         </FormContainer>
       </div>
