@@ -11,7 +11,9 @@ app.use(cors({
 }))
 
 const authRouter = require('./routes/auth.routes');
+const resumeRouter = require('./routes/resume.routes');
 
-app.use('/api/auth',authRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/resume', resumeRouter);
 
 module.exports = app;
