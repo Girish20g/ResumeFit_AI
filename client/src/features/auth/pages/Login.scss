@@ -1,43 +1,54 @@
 .auth-page {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  background: var(--bg-color);
   overflow: hidden;
-  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+
+  /* Ambient glowing orbs */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    max-width: 600px;
+    max-height: 600px;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.12; 
+    animation: floatOrb 20s infinite alternate ease-in-out;
+  }
+
+  &::before {
+    top: -10%;
+    left: -10%;
+    background: var(--primary-color);
+  }
+
+  &::after {
+    bottom: -20%;
+    right: -10%;
+    background: var(--accent-color);
+    animation-delay: -10s;
+  }
 }
 
-.auth-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.4;
-  z-index: 0;
-  pointer-events: none;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;      /* ← behaves like background-size: cover */
-    object-position: center;
-    display: block;
-  }
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10%, 10%) scale(1.1); }
+  100% { transform: translate(-5%, 15%) scale(0.95); }
 }
 
 .login-content {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100%;
+  flex: 1;
   max-width: 600px;
+  margin: 0 auto;
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -85,7 +96,7 @@
 .app-title {
   font-size: 2.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -121,7 +132,7 @@
 
 .app-tagline {
   font-size: 0.9rem;
-  color: #a0a0a0;
+  color: var(--text-secondary);
   font-weight: 500;
   letter-spacing: 0.5px;
   max-width: 350px;
@@ -161,14 +172,14 @@
 
 .forgot-password-link {
   font-size: 0.875rem;
-  color: #6366f1;
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
   white-space: nowrap;
 
   &:hover {
-    color: #818cf8;
+    color: var(--primary-hover);
     text-decoration: underline;
   }
 

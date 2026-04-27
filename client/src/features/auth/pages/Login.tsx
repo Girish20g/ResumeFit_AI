@@ -4,8 +4,8 @@ import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import './Login.scss';
 import { Link, useNavigate } from 'react-router';
-import loginBg from "../../../assets/login_background.svg";
 import { useAuth } from '../hooks/useAuth';
+import Navbar from '../../../components/Navbar';
 
 interface FormState {
   email: string;
@@ -143,9 +143,8 @@ const Login: React.FC = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-background">
-        <img src={loginBg} alt="" aria-hidden="true" />
-      </div>
+      <Navbar />
+
       <div className="login-content">
         <div className="app-header">
           <h1 className="app-title">ResumeFit AI</h1>

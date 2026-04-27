@@ -15,7 +15,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #e0e0e0;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   letter-spacing: 0.3px;
 
@@ -40,10 +40,10 @@
   width: 100%;
   padding: 0.875rem 1rem 0.875rem 1rem;
   font-size: 1rem;
-  border: 2px solid #404040;
+  border: 2px solid var(--input-border);
   border-radius: 0.5rem;
-  background-color: #2a2a2a;
-  color: #ffffff;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   transition: all 0.3s ease;
   font-family: inherit;
 
@@ -61,23 +61,20 @@
   }
 
   &::placeholder {
-    color: #8b8b8b;
+    color: var(--text-secondary);
   }
 
   &:focus {
     outline: none;
-    border-color: #6366f1;
-    background-color: #333333;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
 
   &:hover:not(:disabled) {
-    border-color: #505050;
+    border-color: var(--primary-color);
   }
 
   &:disabled {
-    background-color: #1a1a1a;
-    color: #666666;
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -98,7 +95,7 @@
   right: 1rem;
   background: none;
   border: none;
-  color: #a0a0a0;
+  color: var(--text-secondary);
   font-size: 1.125rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -109,7 +106,7 @@
   line-height: 1;
 
   &:hover:not(:disabled) {
-    color: #6366f1;
+    color: var(--primary-color);
   }
 
   &:disabled {
