@@ -34,7 +34,7 @@ export const useAuth = () => {
         setLoading(true);
 
         try {
-            const data = await logout();
+            await logout();
             setUser(null);
         } catch (error) {
 
@@ -45,9 +45,15 @@ export const useAuth = () => {
 
     useEffect(() => {
         const getAndSetUser = async () => {
-            const data = await getUser();
-            setUser(data.user);
-            setLoading(false);
+            try {
+                const data = await getUser();
+                setUser(data.user);
+            } catch (error) {
+                setUser(null);
+                console.log("User not found")
+            } finally {
+                setLoading(false);
+            }
         }
         getAndSetUser();
     }, []);

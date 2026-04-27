@@ -1,14 +1,27 @@
 import { createContext, useState } from "react";
 
-export const AuthContext = createContext({
+export interface User {
+    id?: string;
+    username?: string;
+    email?: string;
+}
+
+export interface AuthContextType {
+    user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    loading: boolean;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const AuthContext = createContext<AuthContextType>({
     user: null,
-    setUser: (user: any) => { },
+    setUser: () => { },
     loading: false,
-    setLoading: (loading: boolean) => { }
+    setLoading: () => { }
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     return (

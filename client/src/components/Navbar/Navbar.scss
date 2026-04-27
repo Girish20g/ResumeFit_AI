@@ -1,0 +1,134 @@
+.navbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--nav-border);
+  z-index: 100;
+  position: sticky;
+  top: 0;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    padding: 0 1.25rem;
+  }
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-decoration: none;
+}
+
+.navbar__logo-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  flex-shrink: 0;
+}
+
+.navbar__logo-text {
+  font-size: 1.125rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.navbar__icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+  }
+}
+
+.navbar__user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--nav-border);
+}
+
+.navbar__profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  
+  @media (max-width: 600px) {
+    .navbar__username {
+      display: none;
+    }
+  }
+}
+
+.navbar__logout-btn {
+  background: transparent;
+  border: 1px solid var(--nav-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  @media (max-width: 600px) {
+    span {
+      display: none;
+    }
+    padding: 0.4rem;
+  }
+}
+
+.navbar__login-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
