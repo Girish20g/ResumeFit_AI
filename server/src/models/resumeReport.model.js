@@ -32,6 +32,7 @@ const mongoose = require("mongoose");
  *        focus: string,
  *        tasks: [string]
  * }]
+ * - title: string
  */
 
 const technicalQuestionsSchema = new mongoose.Schema({
@@ -125,6 +126,12 @@ const resumeReportSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
     },
+    title: {
+        type: String,
+        required: [true, "Title is required"]
+    }
+}, {
+    timestamps: true
 });
 
 const resumeReportModel = mongoose.model("ResumeReport", resumeReportSchema);

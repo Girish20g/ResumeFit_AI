@@ -3,37 +3,38 @@ const { z } = require('zod');
 const { zodToJsonSchema } = require('zod-to-json-schema');
 
 const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
+  apiKey: process.env.GEMINI_API_KEY
 });
 
 const resumeReportSchema = z.object({
-    matchScore: z.number().min(0).max(100).describe("The match score between the resume and the job description between 0 to 100 indicating how well the resume matches the job description"),
-    technicalQuestions: z.array(z.object({
-        question: z.string().describe("The technical questions that can be asked in the interview"),
-        intention: z.string().describe("The intention behind the technical question"),
-        answer: z.string().describe("how to answer this question, what points to cover, what keywords to use, what example to include and what common mistakes to avoid")
-    })).describe("Technical questions that can be asked in the interview along with a proper answer for each"),
-    behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The behavioral questions that can be asked in the interview"),
-        intention: z.string().describe("The intention behind the behavioral question"),
-        answer: z.string().describe("how to answer this question, what points to cover, what keywords to use, what example to include and what common mistakes to avoid")
-    })).describe("Behavioral questions that can be asked in the interview along with a proper answer for each"),
-    skillGaps: z.array(z.object({
-        skill: z.string().describe("The skill gap that needs to be addressed"),
-        severity: z.enum(["Low", "Medium", "High"]).describe("The severity of the skill gap"),
-        reason: z.string().describe("The reason for the skill gap"),
-    })).describe("Skill gaps that need to be addressed along with the severity and reason for each"),
-    preparationPlan: z.array(z.object({
-        day: z.number().describe("The day of the preparation plan"),
-        focus: z.string().describe("The focus of the preparation plan"),
-        tasks: z.array(z.string()).describe("The tasks to be completed on the day")
-    })).describe("A day-wise preparation plan to address the skill gaps and improve the match score")
+  matchScore: z.number().min(0).max(100).describe("The match score between the resume and the job description between 0 to 100 indicating how well the resume matches the job description"),
+  technicalQuestions: z.array(z.object({
+    question: z.string().describe("The technical questions that can be asked in the interview"),
+    intention: z.string().describe("The intention behind the technical question"),
+    answer: z.string().describe("how to answer this question, what points to cover, what keywords to use, what example to include and what common mistakes to avoid")
+  })).describe("Technical questions that can be asked in the interview along with a proper answer for each"),
+  behavioralQuestions: z.array(z.object({
+    question: z.string().describe("The behavioral questions that can be asked in the interview"),
+    intention: z.string().describe("The intention behind the behavioral question"),
+    answer: z.string().describe("how to answer this question, what points to cover, what keywords to use, what example to include and what common mistakes to avoid")
+  })).describe("Behavioral questions that can be asked in the interview along with a proper answer for each"),
+  skillGaps: z.array(z.object({
+    skill: z.string().describe("The skill gap that needs to be addressed"),
+    severity: z.enum(["Low", "Medium", "High"]).describe("The severity of the skill gap"),
+    reason: z.string().describe("The reason for the skill gap"),
+  })).describe("Skill gaps that need to be addressed along with the severity and reason for each"),
+  preparationPlan: z.array(z.object({
+    day: z.number().describe("The day of the preparation plan"),
+    focus: z.string().describe("The focus of the preparation plan"),
+    tasks: z.array(z.string()).describe("The tasks to be completed on the day")
+  })).describe("A day-wise preparation plan to address the skill gaps and improve the match score"),
+  title: z.string().describe("The title of the job for which the resume fit report is generated. Try make it intresting and catchy")
 }).describe("A comprehensive resume fit report that includes technical questions, behavioral questions, skill gaps, and a preparation plan to improve the match score");
 
 
 
 async function generateResumeFitReport({ jobDescription, resumeText, selfDescription }) {
-    const prompt = `You are an expert technical recruiter and career coach. Analyze the provided resume, self-description, and job description, then generate a resume fit report as JSON object based on the schema defined.
+  const prompt = `You are an expert technical recruiter and career coach. Analyze the provided resume, self-description, and job description, then generate a resume fit report as JSON object based on the schema defined.
 
 ## INPUTS
 <resume>${resumeText}</resume>
@@ -84,15 +85,15 @@ Return ONLY valid JSON. No markdown, no explanation.
 - preparationPlan: prioritize High-severity gaps first; tasks must be specific (e.g., "Build a REST API with JWT auth" not "practice coding")
 - behavioral answers must reference candidate's actual background from resume/self-description where possible`;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(resumeReportSchema),
-        },
-    });
-    return JSON.parse(response.text);
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: zodToJsonSchema(resumeReportSchema),
+    },
+  });
+  return JSON.parse(response.text);
 }
 
 module.exports = { generateResumeFitReport };

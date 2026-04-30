@@ -12,4 +12,20 @@ const resumeRouter = express.Router();
  */
 resumeRouter.post("/generate-resume-fit-report", authMiddleWare.authUser, upload.single("resume"), resumeController.generateResumeFitReportController);
 
+/**
+ * @route GET /api/resume/report/:reportId
+ * @description Get a resume fit report by id.
+ * @access private
+ */
+resumeRouter.get("/report/:reportId", authMiddleWare.authUser, resumeController.getResumeReportbyIdController);
+
+/**
+ * @route GET /api/resume/reports
+ * @description Get all resume fit reports for a user.
+ * @access private
+ */
+resumeRouter.get("/reports", authMiddleWare.authUser, resumeController.getUserResumeReportsController);
+
+
+
 module.exports = resumeRouter;
