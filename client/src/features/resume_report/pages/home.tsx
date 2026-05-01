@@ -1,8 +1,10 @@
 import React, { useState, type ChangeEvent } from 'react';
-import { TextArea, FileUpload, SectionCard } from '../components';
+import { useNavigate } from 'react-router';
+import { TextArea, FileUpload, SectionCard, AILoading } from '../components';
 import Button from '../../auth/components/Button';
 import Navbar from '../../../components/Navbar';
 import './Home.scss';
+import { useResumeReport } from '../hooks/useResumeReport';
 
 /* ── Types ─────────────────────────────────────────── */
 
@@ -78,25 +80,45 @@ const IconSparkle = () => (
 /* ── Component ─────────────────────────────────────── */
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const { loading, error, handleGenerateResumeFitReport } = useResumeReport();
   const [formState, setFormState] = useState<HomeFormState>({
     jobDescription: '',
     selfDescription: '',
   });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [validationError, setValidationError] = useState<string>('');
 
   const handleTextChange =
     (field: keyof HomeFormState) =>
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      setFormState((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+      (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setFormState((prev) => ({ ...prev, [field]: e.target.value }));
+      };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Generate Report →', {
+    setValidationError('');
+
+    if (!formState.jobDescription.trim()) {
+      setValidationError('Job description is required.');
+      return;
+    }
+
+    if (!formState.selfDescription.trim() && !resumeFile) {
+      setValidationError('Please provide either a self description or upload your resume.');
+      return;
+    }
+
+    const report = await handleGenerateResumeFitReport({
       jobDescription: formState.jobDescription,
       selfDescription: formState.selfDescription,
-      resumeFile,
+      resumeFile: resumeFile,
     });
+
+    if (report && report._id) {
+      console.log(report);
+      navigate(`/report/${report._id}`);
+    }
   };
 
   /* word-count helpers */
@@ -105,6 +127,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-page">
+      {loading && <AILoading />}
       {/* ── Navbar ───────────────────────────────────── */}
       <Navbar />
 
@@ -124,6 +147,18 @@ const Home: React.FC = () => {
             your resume — we'll score the fit and surface what matters.
           </p>
         </div>
+
+        {validationError && (
+          <div style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(239, 68, 68, 0.2)', marginBottom: '1.5rem', textAlign: 'center', maxWidth: '1100px', margin: '0 auto 1.5rem auto' }}>
+            {validationError}
+          </div>
+        )}
+
+        {error && (
+          <div style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(239, 68, 68, 0.2)', marginBottom: '1.5rem', textAlign: 'center', maxWidth: '1100px', margin: '0 auto 1.5rem auto' }}>
+            An error occurred while generating the report. Please try again.
+          </div>
+        )}
 
         {/* Form */}
         <form

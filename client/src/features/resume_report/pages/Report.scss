@@ -17,11 +17,39 @@
   }
 
   &__container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 3rem;
+
+    @media (min-width: 1440px) {
+      max-width: 1400px;
+    }
+  }
+
+  &__questions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+
+    @media (min-width: 1100px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__plan-section {
+    width: 100%;
+  }
+
+  &__plan-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
   }
 
   /* ── Hero Section ──────────────────────────── */
@@ -293,71 +321,55 @@
     }
   }
 
-  /* ── Timeline ──────────────────────────────── */
-  &__timeline {
-    position: relative;
-    padding-left: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 7px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: var(--card-border);
-    }
-  }
-
+  /* ── Timeline (Used in Grid) ──────────────── */
   &__timeline-item {
     position: relative;
-
-    .dot {
-      position: absolute;
-      left: -2rem;
-      top: 0.25rem;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--primary-color);
-      border: 4px solid var(--bg-color);
-      box-shadow: 0 0 0 1px var(--primary-color);
-    }
 
     .content {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
+      border-radius: 20px;
       padding: 1.5rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      }
 
       h4 {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         color: var(--text-primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 1.25rem;
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
 
         span.day {
-          background: rgba(99, 102, 241, 0.1);
-          color: var(--primary-color);
-          padding: 0.2rem 0.6rem;
-          border-radius: 6px;
-          font-size: 0.85rem;
-          font-weight: 700;
+          background: var(--primary-color);
+          color: white;
+          padding: 0.25rem 0.85rem;
+          border-radius: 99px;
+          font-size: 0.75rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
       }
 
       ul {
         list-style: none;
         padding: 0;
-        margin: 1rem 0 0 0;
+        margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 1rem;
+        flex: 1;
 
         li {
           display: flex;
@@ -368,7 +380,7 @@
           line-height: 1.5;
 
           svg {
-            color: var(--accent-color);
+            color: var(--primary-color);
             margin-top: 0.15rem;
             flex-shrink: 0;
             width: 16px;
@@ -377,5 +389,114 @@
         }
       }
     }
+  }
+
+  /* ── Loader & Error ────────────────────────── */
+  &__loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 3rem 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__spinner {
+    width: 80px;
+    height: 80px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      circle {
+        stroke: url(#spinner-gradient);
+        stroke-linecap: round;
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: 0;
+        animation: dash 1.5s ease-in-out infinite;
+      }
+    }
+
+    /* Define an SVG gradient within CSS using a background trick or just use solid primary color if SVG gradient isn't in DOM. Let's use solid primary to be safe */
+    svg circle {
+      stroke: var(--primary-color);
+    }
+  }
+
+  &__loader-text-wrapper {
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  &__loader-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin: 0;
+  }
+
+  &__loader-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 3rem;
+    background: var(--card-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    max-width: 450px;
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -13,8 +13,8 @@ import {
   CheckSquare
 } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
-import { mockReportData } from '../mockReportData';
 import './Report.scss';
+import { useResumeReport } from '../hooks/useResumeReport';
 
 // Type definitions matching our schema
 type Question = {
@@ -36,8 +36,15 @@ type PreparationPlan = {
 };
 
 const Report: React.FC = () => {
-  const { id } = useParams();
-  const report = mockReportData;
+  const { reportId } = useParams();
+  const { report, handleGetReport, loading, error } = useResumeReport();
+  //const report = mockReportData;
+  useEffect(() => {
+    if (reportId) {
+
+      handleGetReport(reportId);
+    }
+  }, [reportId]);
 
   // Animation variants
   const containerVariants = {
@@ -56,6 +63,32 @@ const Report: React.FC = () => {
       transition: { type: "spring", stiffness: 100, damping: 15 }
     }
   };
+
+  if (error) {
+    return (
+      <div className="report-page">
+        <Navbar />
+        <main className="report-page__main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="report-page__error">
+            <AlertTriangle size={48} color="#ef4444" />
+            <h2>Failed to Load Report</h2>
+            <p>We encountered an issue while generating or fetching your report. Please try again later.</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (loading || !report) {
+    return (
+      <div className="report-page">
+        <Navbar />
+        <main className="report-page__main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ReportLoader />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="report-page">
@@ -124,39 +157,42 @@ const Report: React.FC = () => {
             </div>
           </motion.section>
 
-          {/* ── Technical Questions ──────────────── */}
-          <motion.section variants={itemVariants}>
-            <h2 className="report-page__section-header">
-              <Cpu size={28} />
-              Technical Interview Questions
-            </h2>
-            <div className="report-page__questions-list">
-              {report.technicalQuestions.map((q, idx) => (
-                <QuestionAccordion key={idx} question={q} />
-              ))}
-            </div>
-          </motion.section>
+          {/* ── Questions Grid ─────────────────── */}
+          <div className="report-page__questions-grid">
+            {/* Technical Questions */}
+            <motion.section variants={itemVariants}>
+              <h2 className="report-page__section-header">
+                <Cpu size={28} />
+                Technical Questions
+              </h2>
+              <div className="report-page__questions-list">
+                {report.technicalQuestions.map((q, idx) => (
+                  <QuestionAccordion key={idx} question={q} />
+                ))}
+              </div>
+            </motion.section>
 
-          {/* ── Behavioral Questions ─────────────── */}
-          <motion.section variants={itemVariants}>
-            <h2 className="report-page__section-header">
-              <MessageSquare size={28} />
-              Behavioral Interview Questions
-            </h2>
-            <div className="report-page__questions-list">
-              {report.behavioralQuestions.map((q, idx) => (
-                <QuestionAccordion key={idx} question={q} />
-              ))}
-            </div>
-          </motion.section>
+            {/* Behavioral Questions */}
+            <motion.section variants={itemVariants}>
+              <h2 className="report-page__section-header">
+                <MessageSquare size={28} />
+                Behavioral Questions
+              </h2>
+              <div className="report-page__questions-list">
+                {report.behavioralQuestions.map((q, idx) => (
+                  <QuestionAccordion key={idx} question={q} />
+                ))}
+              </div>
+            </motion.section>
+          </div>
 
-          {/* ── Preparation Plan ─────────────────── */}
-          <motion.section variants={itemVariants}>
+          {/* ── Preparation Plan (Full Width Grid) ── */}
+          <motion.section variants={itemVariants} className="report-page__plan-section">
             <h2 className="report-page__section-header">
               <Calendar size={28} />
               Preparation Action Plan
             </h2>
-            <div className="report-page__timeline">
+            <div className="report-page__plan-grid">
               {report.preparationPlan.map((plan, idx) => (
                 <TimelineItem key={idx} plan={plan} />
               ))}
@@ -170,6 +206,60 @@ const Report: React.FC = () => {
 };
 
 /* ── Subcomponents ─────────────────────────────────── */
+
+const loadingMessages = [
+  "Parsing your resume details...",
+  "Analyzing job requirements...",
+  "Evaluating skill matches...",
+  "Formulating interview questions...",
+  "Generating action plan...",
+  "Finalizing your report..."
+];
+
+const ReportLoader = () => {
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="report-page__loader">
+      <motion.div
+        className="report-page__spinner"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+      >
+        <svg viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
+        </svg>
+      </motion.div>
+      <div className="report-page__loader-text-wrapper">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={messageIndex}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.4 }}
+            className="report-page__loader-text"
+          >
+            {loadingMessages[messageIndex]}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+      <motion.div
+        className="report-page__loader-progress"
+        initial={{ width: 0 }}
+        animate={{ width: "100%" }}
+        transition={{ duration: 15, ease: "linear" }}
+      />
+    </div>
+  );
+};
 
 const SkillGapCard = ({ gap }: { gap: SkillGap }) => {
   const getSeverityIcon = () => {
