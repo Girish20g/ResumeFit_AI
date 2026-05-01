@@ -86,7 +86,7 @@ Return ONLY valid JSON. No markdown, no explanation.
 - behavioral answers must reference candidate's actual background from resume/self-description where possible`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       responseMimeType: "application/json",

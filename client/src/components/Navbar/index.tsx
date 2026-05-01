@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../features/auth/hooks/useAuth';
+import { useResumeReport } from '../../features/resume_report/hooks/useResumeReport';
+import ReportsModal from '../../features/resume_report/components/ReportsModal';
 import './Navbar.scss';
 import { Link } from 'react-router';
+import { Briefcase } from 'lucide-react';
 
 const IconSun = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,46 +45,89 @@ const IconLogout = () => (
 const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, handleLogout } = useAuth();
+  const { 
+    userReports, 
+    loading, 
+    handleGetMyResumeReports, 
+    handleDeleteReport, 
+    handleExportReport,
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy
+  } = useResumeReport();
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
 
   return (
-    <header className="navbar">
-      <Link to="/" className="navbar__brand">
-        <div className="navbar__logo-mark" aria-hidden="true" />
-        <span className="navbar__logo-text">ResumeFit AI</span>
-      </Link>
-      
-      <div className="navbar__actions">
-        <button 
-          className="navbar__icon-btn" 
-          onClick={toggleTheme}
-          aria-label="Toggle Theme"
-          title="Toggle Theme"
-        >
-          {theme === 'dark' ? <IconSun /> : <IconMoon />}
-        </button>
+    <>
+      <header className="navbar">
+        <Link to="/" className="navbar__brand">
+          <div className="navbar__logo-mark" aria-hidden="true" />
+          <span className="navbar__logo-text">ResumeFit AI</span>
+        </Link>
         
-        {user ? (
-          <div className="navbar__user-menu">
-            <div className="navbar__profile">
-              <IconUser />
-              <span className="navbar__username">{user.username || user.email?.split('@')[0]}</span>
-            </div>
-            <button 
-              className="navbar__logout-btn" 
-              onClick={handleLogout}
-              title="Logout"
+        <div className="navbar__actions">
+          {user && (
+            <button
+              className="navbar__icon-btn navbar__reports-btn"
+              onClick={() => setIsReportsModalOpen(true)}
+              title="My Reports"
+              aria-label="My Reports"
             >
-              <IconLogout />
-              <span>Logout</span>
+              <Briefcase size={20} />
+              {userReports.length > 0 && (
+                <span className="navbar__reports-badge">{userReports.length}</span>
+              )}
             </button>
-          </div>
-        ) : (
-          <Link to="/login" className="navbar__login-link">
-            Sign In
-          </Link>
-        )}
-      </div>
-    </header>
+          )}
+          
+          <button 
+            className="navbar__icon-btn" 
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            title="Toggle Theme"
+          >
+            {theme === 'dark' ? <IconSun /> : <IconMoon />}
+          </button>
+          
+          {user ? (
+            <div className="navbar__user-menu">
+              <div className="navbar__profile">
+                <IconUser />
+                <span className="navbar__username">{user.username || user.email?.split('@')[0]}</span>
+              </div>
+              <button 
+                className="navbar__logout-btn" 
+                onClick={handleLogout}
+                title="Logout"
+              >
+                <IconLogout />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="navbar__login-link">
+              Sign In
+            </Link>
+          )}
+        </div>
+      </header>
+
+      {/* Reports Modal */}
+      <ReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
+        reports={userReports}
+        loading={loading}
+        onFetchReports={handleGetMyResumeReports}
+        onDeleteReport={handleDeleteReport}
+        onExportReport={handleExportReport}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+      />
+    </>
   );
 };
 
