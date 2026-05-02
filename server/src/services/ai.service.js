@@ -1,7 +1,8 @@
 const { GoogleGenAI } = require('@google/genai');
 const { z } = require('zod');
 const { zodToJsonSchema } = require('zod-to-json-schema');
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer-core');
+const chromium = require('@sparticuz/chromium-min');
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -98,10 +99,21 @@ Return ONLY valid JSON. No markdown, no explanation.
 }
 
 async function generatePdfFromHtml(htmlContent) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(
+      'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+    ),
+    headless: chromium.headless,
+  });
+
   const page = await browser.newPage();
   await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-  const pdfBuffer = await page.pdf({ format: 'A4', margin: { top: '15mm', bottom: '15mm', left: '12mm', right: '12mm' } });
+  const pdfBuffer = await page.pdf({
+    format: 'A4',
+    margin: { top: '15mm', bottom: '15mm', left: '12mm', right: '12mm' }
+  });
   await browser.close();
   return pdfBuffer;
 }
