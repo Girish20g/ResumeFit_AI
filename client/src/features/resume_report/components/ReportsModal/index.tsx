@@ -12,7 +12,6 @@ interface ReportsModalProps {
   loading: boolean;
   onFetchReports: () => Promise<any[]>;
   onDeleteReport: (reportId: string) => Promise<boolean>;
-  onExportReport: (reportId: string, format: 'pdf' | 'json') => Promise<any>;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   sortBy: 'newest' | 'score' | 'oldest';
@@ -26,7 +25,6 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
   loading,
   onFetchReports,
   onDeleteReport,
-  onExportReport,
   searchQuery,
   onSearchChange,
   sortBy,
@@ -34,7 +32,6 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [exporting, setExporting] = useState<string | null>(null);
   const [sortDropdown, setSortDropdown] = useState(false);
 
   // Fetch reports when modal opens
@@ -74,16 +71,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
     }
   };
 
-  const handleExportClick = async (reportId: string, format: 'pdf' | 'json') => {
-    setExporting(reportId);
-    try {
-      await onExportReport(reportId, format);
-    } catch (error) {
-      console.error(`Failed to export ${format}:`, error);
-    } finally {
-      setExporting(null);
-    }
-  };
+
 
   // Modal animations
   const backdropVariants = {
@@ -256,9 +244,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
                         report={report}
                         onView={() => handleViewReport(report._id)}
                         onDelete={() => setDeleteConfirm(report._id)}
-                        onExport={(format) => handleExportClick(report._id, format)}
                         isDeleting={deleteConfirm === report._id}
-                        isExporting={exporting === report._id}
                       />
                     </motion.div>
                   ))}

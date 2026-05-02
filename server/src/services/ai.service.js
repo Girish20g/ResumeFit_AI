@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require('@google/genai');
 const { z } = require('zod');
 const { zodToJsonSchema } = require('zod-to-json-schema');
+const puppeteer = require("puppeteer");
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -96,4 +97,45 @@ Return ONLY valid JSON. No markdown, no explanation.
   return JSON.parse(response.text);
 }
 
-module.exports = { generateResumeFitReport };
+async function generatePdfFromHtml(htmlContent) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+  const pdfBuffer = await page.pdf({ format: 'A4', margin: { top: '15mm', bottom: '15mm', left: '12mm', right: '12mm' } });
+  await browser.close();
+  return pdfBuffer;
+}
+
+async function generateResumePDF({ resume, selfDescription, jobDescription }) {
+  const resumePdfSchema = z.object({
+    html: z.string().describe("The HTML content of the resume, which should be well-formatted and visually appealing, incorporating the resume content, self-description, and job description in a way that highlights the candidate's strengths and fit for the role, which can be directly converted to a PDF format using a library like Puppeteer")
+  }).describe("Schema for the generated resume PDF");
+
+  const prompt = `You are an expert resume writer and designer. Create a visually appealing and well-structured HTML resume that effectively showcases the candidate's qualifications, experience, and fit for the job description. Use the provided resume content, self-description, and job description to craft a compelling narrative that highlights the candidate's strengths and suitability for the role.
+
+## INPUTS
+<resume>${resume}</resume>
+<self_description>${selfDescription}</self_description>
+<job_description>${jobDescription}</job_description>
+
+## OUTPUT SCHEMA
+Return ONLY valid JSON. No markdown, no explanation.
+
+{
+  "html": "<well-formatted HTML content for the resume>"
+}
+  `;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: zodToJsonSchema(resumePdfSchema),
+    },
+  });
+  const pdfBuffer = await generatePdfFromHtml(JSON.parse(response.text).html);
+  return pdfBuffer;
+}
+
+module.exports = { generateResumeFitReport, generateResumePDF };
