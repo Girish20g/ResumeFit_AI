@@ -6,9 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieparser());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://resume-fit-ai-nu.vercel.app/'],
     credentials: true
-}))
+}));
 
 const authRouter = require('./routes/auth.routes');
 const resumeRouter = require('./routes/resume.routes');
