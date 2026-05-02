@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3000";
+//const baseUrl = "http://localhost:3000";
+const baseUrl = import.meta.env.VITE_API_URL; // Vite automatically replaces this with the value from .env
 const ResumeController = "api/resume";
 
 const reportApi = axios.create({

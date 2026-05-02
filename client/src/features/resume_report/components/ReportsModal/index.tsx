@@ -12,6 +12,7 @@ interface ReportsModalProps {
   loading: boolean;
   onFetchReports: () => Promise<any[]>;
   onDeleteReport: (reportId: string) => Promise<boolean>;
+  onExportReport: (reportId: string, format: 'pdf' | 'json') => Promise<any>;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   sortBy: 'newest' | 'score' | 'oldest';
@@ -30,6 +31,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
   sortBy,
   onSortChange,
 }) => {
+  // onExportReport is available in props but not used yet
   const navigate = useNavigate();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [sortDropdown, setSortDropdown] = useState(false);
@@ -84,14 +86,14 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
     visible: {
       x: 0,
       opacity: 1,
-      transition: { type: 'spring', stiffness: 300, damping: 30 }
+      transition: { type: 'spring' as const, stiffness: 300, damping: 30 }
     },
     exit: {
       x: '100%',
       opacity: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 30 }
+      transition: { type: 'spring' as const, stiffness: 300, damping: 30 }
     }
-  };
+  } as const;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -106,9 +108,9 @@ const ReportsModal: React.FC<ReportsModalProps> = ({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 15 }
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 }
     }
-  };
+  } as const;
 
   return (
     <AnimatePresence>

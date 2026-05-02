@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreVertical, Download, Trash2, Eye, FileJson, File } from 'lucide-react';
+import { MoreVertical, Trash2, Eye } from 'lucide-react';
 import './ReportCard.scss';
 
 interface ReportCardProps {
