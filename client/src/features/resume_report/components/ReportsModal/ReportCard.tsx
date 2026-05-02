@@ -12,18 +12,14 @@ interface ReportCardProps {
   };
   onView: () => void;
   onDelete: () => void;
-  onExport: (format: 'pdf' | 'json') => void;
   isDeleting: boolean;
-  isExporting: boolean;
 }
 
 const ReportCard: React.FC<ReportCardProps> = ({
   report,
   onView,
   onDelete,
-  onExport,
   isDeleting,
-  isExporting,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -129,28 +125,6 @@ const ReportCard: React.FC<ReportCardProps> = ({
                   exit={{ opacity: 0, y: -8 }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <button
-                    className="report-card__menu-item report-card__menu-item--export"
-                    onClick={() => {
-                      onExport('pdf');
-                      setShowMenu(false);
-                    }}
-                    disabled={isExporting === 'pdf'}
-                  >
-                    <File size={14} />
-                    <span>{isExporting === 'pdf' ? 'Exporting...' : 'Export as PDF'}</span>
-                  </button>
-                  <button
-                    className="report-card__menu-item report-card__menu-item--export"
-                    onClick={() => {
-                      onExport('json');
-                      setShowMenu(false);
-                    }}
-                    disabled={isExporting === 'json'}
-                  >
-                    <FileJson size={14} />
-                    <span>{isExporting === 'json' ? 'Exporting...' : 'Export as JSON'}</span>
-                  </button>
                   <button
                     className="report-card__menu-item report-card__menu-item--delete"
                     onClick={() => {

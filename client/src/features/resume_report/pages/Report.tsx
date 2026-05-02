@@ -10,7 +10,9 @@ import {
   MessageSquare,
   Cpu,
   Calendar,
-  CheckSquare
+  CheckSquare,
+  Download,
+  Sparkles
 } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
 import './Report.scss';
@@ -37,8 +39,20 @@ type PreparationPlan = {
 
 const Report: React.FC = () => {
   const { reportId } = useParams();
-  const { report, handleGetReport, loading, error } = useResumeReport();
-  //const report = mockReportData;
+  const { report, handleGetReport, handleExportReport, loading, error } = useResumeReport();
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  
+  const handleDownloadResume = async () => {
+    if (!reportId) return;
+    setIsGeneratingPDF(true);
+    try {
+      await handleExportReport(reportId, 'pdf');
+    } catch (err) {
+      console.error("Failed to generate resume:", err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
   useEffect(() => {
     if (reportId) {
 
@@ -141,6 +155,20 @@ const Report: React.FC = () => {
               <p className="report-page__subtitle">
                 Based on our deep analysis, here is how well your profile aligns with the target role, along with actionable insights to help you prepare.
               </p>
+              
+              <motion.button
+                className="report-page__download-btn"
+                onClick={handleDownloadResume}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Sparkles size={20} />
+                <span>Download Optimized Resume</span>
+                <Download size={18} />
+              </motion.button>
             </div>
           </motion.section>
 
@@ -201,6 +229,28 @@ const Report: React.FC = () => {
 
         </motion.div>
       </main>
+
+      <AnimatePresence>
+        {isGeneratingPDF && (
+          <motion.div 
+            className="report-page__overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ReportLoader 
+              customMessages={[
+                "AI is crafting your perfect resume...",
+                "Optimizing for ATS systems...",
+                "Highlighting your key achievements...",
+                "Polishing the layout and design...",
+                "Generating your PDF download..."
+              ]} 
+              title="Generating Optimized Resume"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -216,18 +266,20 @@ const loadingMessages = [
   "Finalizing your report..."
 ];
 
-const ReportLoader = () => {
+const ReportLoader = ({ customMessages, title }: { customMessages?: string[], title?: string }) => {
   const [messageIndex, setMessageIndex] = useState(0);
+  const messages = customMessages || loadingMessages;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+      setMessageIndex((prev) => (prev + 1) % messages.length);
     }, 2500);
     return () => clearInterval(interval);
-  }, []);
+  }, [messages]);
 
   return (
     <div className="report-page__loader">
+      {title && <h3 className="report-page__loader-title">{title}</h3>}
       <motion.div
         className="report-page__spinner"
         animate={{ rotate: 360 }}

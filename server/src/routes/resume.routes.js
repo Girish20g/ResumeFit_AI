@@ -26,6 +26,12 @@ resumeRouter.get("/report/:reportId", authMiddleWare.authUser, resumeController.
  */
 resumeRouter.get("/reports", authMiddleWare.authUser, resumeController.getUserResumeReportsController);
 
+/**
+ * @route POST /api/resume/export-resume/:reportId
+ * @description Export a resume fit report as PDF.
+ * @access private
+ */
+resumeRouter.post("/export-resume/:reportId", authMiddleWare.authUser, resumeController.generateResumePDFController);
 
 
 module.exports = resumeRouter;

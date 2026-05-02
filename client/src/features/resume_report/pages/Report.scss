@@ -94,9 +94,44 @@
   }
 
   &__subtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
     max-width: 600px;
+    margin-bottom: 1rem;
+  }
+
+  &__download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.75rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    width: fit-content;
+    margin-top: 0.5rem;
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+      
+      svg:last-child {
+        transform: translateY(2px);
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
   }
 
   &__score-container {
@@ -408,6 +443,29 @@
     max-width: 450px;
     position: relative;
     overflow: hidden;
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  &__loader-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    text-align: center;
   }
 
   &__spinner {

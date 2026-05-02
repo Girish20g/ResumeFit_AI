@@ -1,5 +1,5 @@
 const pdfParse = require("pdf-parse");
-const { generateResumeFitReport } = require("../services/ai.service");
+const { generateResumeFitReport, generateResumePDF } = require("../services/ai.service");
 const resumeReportModel = require("../models/resumeReport.model");
 
 /**
@@ -81,4 +81,37 @@ async function getUserResumeReportsController(req, res) {
     }
 }
 
-module.exports = { generateResumeFitReportController, getResumeReportbyIdController, getUserResumeReportsController };
+/**
+ * @description controller to generate a resume pdf basedon user self description and job description, and return the pdf buffer to client.
+ * @access private
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
+async function generateResumePDFController(req, res) {
+    const {reportId} = req.params;
+    try {
+        const resumeReport = await resumeReportModel.findById(reportId);
+        if (!resumeReport) {
+            return res.status(404).json({
+                message: "Resume Fit Report not found"
+            });
+        }
+        const { jobDescription, selfDescription, resumeText } = resumeReport;
+        const pdfBuffer = await generateResumePDF({ resume: resumeText, jobDescription, selfDescription });
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment; filename=ats_resume.pdf',
+            'Content-Length': pdfBuffer.length
+        });
+        return res.status(200).send(pdfBuffer);
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error generating resume PDF",
+            error: error.message
+        });
+    }
+}
+
+module.exports = { generateResumeFitReportController, getResumeReportbyIdController, getUserResumeReportsController, generateResumePDFController };

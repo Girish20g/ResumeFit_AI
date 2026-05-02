@@ -63,15 +63,15 @@ export async function deleteReport(reportId: string) {
 export async function exportReport(reportId: string, format: 'pdf' | 'json') {
     try {
         if (format === 'pdf') {
-            const response = await reportApi.get(`/${ResumeController}/report/${reportId}/export?format=pdf`, {
+            const response = await reportApi.post(`/${ResumeController}/export-resume/${reportId}`, {}, {
                 responseType: 'blob'
             });
             // Create a download link for PDF
             const blob = response.data;
-            const url = window.URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
             const a = document.createElement('a');
             a.href = url;
-            a.download = `report-${reportId}.pdf`;
+            a.download = `resume-${reportId}.pdf`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
