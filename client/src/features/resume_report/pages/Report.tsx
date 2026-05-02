@@ -74,9 +74,9 @@ const Report: React.FC = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100, damping: 15 }
+      transition: { type: "spring" as const, stiffness: 100, damping: 15 }
     }
-  };
+  } as const;
 
   if (error) {
     return (
@@ -179,7 +179,7 @@ const Report: React.FC = () => {
               Identified Skill Gaps
             </h2>
             <div className="report-page__gaps-grid">
-              {report.skillGaps.map((gap, idx) => (
+              {report.skillGaps.map((gap: any, idx: number) => (
                 <SkillGapCard key={idx} gap={gap} />
               ))}
             </div>
@@ -194,7 +194,7 @@ const Report: React.FC = () => {
                 Technical Questions
               </h2>
               <div className="report-page__questions-list">
-                {report.technicalQuestions.map((q, idx) => (
+                {report.technicalQuestions.map((q: any, idx: number) => (
                   <QuestionAccordion key={idx} question={q} />
                 ))}
               </div>
@@ -207,7 +207,7 @@ const Report: React.FC = () => {
                 Behavioral Questions
               </h2>
               <div className="report-page__questions-list">
-                {report.behavioralQuestions.map((q, idx) => (
+                {report.behavioralQuestions.map((q: any, idx: number) => (
                   <QuestionAccordion key={idx} question={q} />
                 ))}
               </div>
@@ -221,7 +221,7 @@ const Report: React.FC = () => {
               Preparation Action Plan
             </h2>
             <div className="report-page__plan-grid">
-              {report.preparationPlan.map((plan, idx) => (
+              {report.preparationPlan.map((plan: any, idx: number) => (
                 <TimelineItem key={idx} plan={plan} />
               ))}
             </div>

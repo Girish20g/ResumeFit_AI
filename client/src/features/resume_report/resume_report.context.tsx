@@ -18,10 +18,10 @@ export interface ResumeReportContextType {
 
 export const ResumeReportContext = createContext<ResumeReportContextType | undefined>(undefined);
 
-export const ResumeReportProvider = ({ children }) => {
+export const ResumeReportProvider = ({ children }: { children: React.ReactNode }) => {
     const { } = useAuth();
-    const [report, setReport] = useState(null);
-    const [userReports, setUserReports] = useState([]);
+    const [report, setReport] = useState<any>(null);
+    const [userReports, setUserReports] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
